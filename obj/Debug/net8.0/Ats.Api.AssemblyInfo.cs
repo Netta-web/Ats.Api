@@ -14,7 +14,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Ats.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d3d9b2ce5abb62ca23f8cfa88602083c324d2c07")]
+>>>>>>> 170b562 (Business logic check? Here we go!!!)
 [assembly: System.Reflection.AssemblyProductAttribute("Ats.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Ats.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

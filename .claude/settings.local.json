@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cd \"c:\\\\Users\\\\Bennetta Pookie🦾💕\\\\Ats.Api\"; dotnet build --no-restore 2>&1 | Where-Object { $_ -match \"error CS|warning CS|Build succeeded|Error\\\\\\(s\\\\\\)\" })"
+    ]
+  }
+}

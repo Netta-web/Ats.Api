@@ -114,3 +114,7 @@ C:\Users\Bennetta Pookie🦾💕\Ats.Api\obj\Debug\net8.0\rjsmcshtml.dswa.cache.
 C:\Users\Bennetta Pookie🦾💕\Ats.Api\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\Bennetta Pookie🦾💕\Ats.Api\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Users\Bennetta Pookie🦾💕\Ats.Api\obj\Debug\net8.0\swae.build.ex.cache
+<<<<<<< HEAD
+=======
+C:\Users\Bennetta Pookie🦾💕\Ats.Api\obj\Debug\net8.0\Ats.Api.sourcelink.json
+>>>>>>> 170b562 (Business logic check? Here we go!!!)
