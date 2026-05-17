@@ -213,6 +213,54 @@ public class ApplicationsService(AppDbContext db) : IApplicationsService
         return StageChangeResult.Success(ToSummaryDto(application));
     }
 
+    public async Task<ScoreResult> UpsertScoreAsync(
+        Guid applicationId, ScoreDimension dimension, int score, string comment, Guid teamMemberId)
+    {
+        var applicationExists = await db.Applications.AnyAsync(a => a.Id == applicationId);
+        if (!applicationExists)
+            return ScoreResult.AppNotFound();
+
+        var teamMember = await db.TeamMembers
+            .AsNoTracking()
+            .Where(t => t.Id == teamMemberId)
+            .Select(t => new { t.Id, t.Name })
+            .FirstOrDefaultAsync();
+        if (teamMember is null)
+            return ScoreResult.MemberNotFound();
+
+        // Load with tracking — EF generates UPDATE if found, INSERT if new
+        var existing = await db.ApplicationScores
+            .FirstOrDefaultAsync(s => s.ApplicationId == applicationId && s.Dimension == dimension);
+
+        if (existing is null)
+        {
+            existing = new ApplicationScore
+            {
+                Id = Guid.NewGuid(),
+                ApplicationId = applicationId,
+                Dimension = dimension
+            };
+            db.ApplicationScores.Add(existing);
+        }
+
+        existing.Score = score;
+        existing.Comment = comment;
+        existing.UpdatedByTeamMemberId = teamMemberId;
+        existing.UpdatedAt = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+
+        return ScoreResult.Success(new ScoreDto
+        {
+            Id = existing.Id,
+            Dimension = existing.Dimension.ToString(),
+            Score = existing.Score,
+            Comment = existing.Comment,
+            UpdatedByName = teamMember.Name,
+            UpdatedAt = existing.UpdatedAt
+        });
+    }
+
     private static ApplicationSummaryDto ToSummaryDto(Application a) => new()
     {
         Id = a.Id,

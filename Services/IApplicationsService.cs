@@ -14,4 +14,5 @@ public interface IApplicationsService
     Task<List<ApplicationSummaryDto>> GetApplicationsForJobAsync(Guid jobId, ApplicationStage? stage);
     Task<ApplicationProfileDto?> GetApplicationProfileAsync(Guid id);
     Task<StageChangeResult> MoveApplicationStageAsync(Guid applicationId, ApplicationStage toStage, Guid teamMemberId, string comment);
+    Task<ScoreResult> UpsertScoreAsync(Guid applicationId, ScoreDimension dimension, int score, string comment, Guid teamMemberId);
 }

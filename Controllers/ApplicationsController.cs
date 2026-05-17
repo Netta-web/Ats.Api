@@ -100,6 +100,45 @@ public class ApplicationsController(IApplicationsService applicationsService) : 
         return Ok(notes);
     }
 
+    /// <summary>
+    /// Set or update a score for an application on a specific dimension.
+    /// Valid dimensions: culture-fit, interview, assessment. Requires X-Team-Member-Id header.
+    /// </summary>
+    [HttpPut("api/applications/{id:guid}/scores/{dimension}")]
+    [ProducesResponseType(typeof(ScoreDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ScoreDto>> UpsertScore(
+        Guid id,
+        string dimension,
+        [FromBody] UpsertScoreRequestDto dto,
+        [FromHeader(Name = "X-Team-Member-Id")] string? teamMemberIdHeader = null)
+    {
+        if (string.IsNullOrEmpty(teamMemberIdHeader) || !Guid.TryParse(teamMemberIdHeader, out var teamMemberId))
+            return BadRequest("X-Team-Member-Id header is required and must be a valid GUID.");
+
+        var scoreDimension = ParseDimension(dimension);
+        if (scoreDimension is null)
+            return BadRequest($"Invalid dimension '{dimension}'. Valid values: culture-fit, interview, assessment.");
+
+        var result = await applicationsService.UpsertScoreAsync(
+            id, scoreDimension.Value, dto.Score!.Value, dto.Comment ?? string.Empty, teamMemberId);
+
+        if (result.ApplicationNotFound) return NotFound("Application not found.");
+        if (result.TeamMemberNotFound) return NotFound("Team member not found.");
+
+        return Ok(result.Score);
+    }
+
+    private static ScoreDimension? ParseDimension(string dimension) =>
+        dimension.ToLowerInvariant() switch
+        {
+            "culture-fit" => ScoreDimension.CultureFit,
+            "interview"   => ScoreDimension.Interview,
+            "assessment"  => ScoreDimension.Assessment,
+            _             => null
+        };
+
     /// <summary>Get the full profile of an application including notes, scores, and stage history.</summary>
     [HttpGet("api/applications/{id:guid}")]
     [ProducesResponseType(typeof(ApplicationProfileDto), StatusCodes.Status200OK)]
