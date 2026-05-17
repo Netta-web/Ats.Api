@@ -35,7 +35,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await db.Database.MigrateAsync();
+    if (!app.Environment.IsEnvironment("Testing"))
+        await db.Database.MigrateAsync();
     await DatabaseSeeder.SeedAsync(db);
 }
 
@@ -45,3 +46,6 @@ app.UseSwaggerUI();
 app.MapControllers();
 
 app.Run();
+
+// Exposes the auto-generated Program class to the test project
+public partial class Program { }
